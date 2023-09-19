@@ -1187,7 +1187,7 @@ static void ixx_pas_ib_xxx_free(struct ixx_pci_priv *priv)
                 }
 
                 if (priv->intf->dmavadd)
-                        pci_free_consistent(priv->pdev, priv->intf->dmalen,
+                        dma_free_coherent(&priv->pdev->dev, priv->intf->dmalen,
                                         priv->intf->dmavadd,
                                         priv->intf->dmaadd);
 

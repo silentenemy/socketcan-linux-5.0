@@ -27,7 +27,7 @@
 #include <linux/types.h>
 #include <linux/gfp.h>
 #include <asm-generic/errno.h>
-#include <stdarg.h>
+#include <linux/stdarg.h>
 
 #include "ixx_usb_core.h"
 

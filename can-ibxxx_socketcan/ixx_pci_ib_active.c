@@ -34,7 +34,7 @@
 
 #include <asm-generic/errno.h>
 
-#include <stdarg.h>
+#include <linux/stdarg.h>
 #include "ifi.h"
 #include "ififd.h"
 #include "ixx_pci_core.h"
@@ -1820,7 +1820,7 @@ static void ixx_act_ib_xxx_free(struct ixx_pci_priv *priv)
                 }
 
                 if (priv->intf->dmavadd)
-                        pci_free_consistent(priv->pdev, priv->intf->dmalen,
+                        dma_free_coherent(&priv->pdev->dev, priv->intf->dmalen,
                                         priv->intf->dmavadd,
                                         priv->intf->dmaadd);
 
@@ -1869,9 +1869,9 @@ static int ixx_act_ib_xxx_probe(struct pci_dev *pdev,
         intf->addmemlen = CAN_IB2X0_ADDMEM_LEN;
         intf->dmalen = CAN_IB2X0_DMA_LEN;
 
-        intf->dmavadd = pci_alloc_consistent(pdev, intf->dmalen, &intf->dmaadd);
+        intf->dmavadd = dma_alloc_coherent(&pdev->dev, intf->dmalen, &intf->dmaadd, GFP_KERNEL);
         if (!intf->dmavadd) {
-                printk("pci_alloc_consistent failed\n");
+                printk("dma_alloc_coherent failed\n");
                 err = -ENOBUFS;
                 goto release_dma;
         } else
@@ -1904,7 +1904,7 @@ static int ixx_act_ib_xxx_probe(struct pci_dev *pdev,
         release_irq: kfree(intf->addmemvadd);
         pci_disable_msi(pdev);
         intf->addmemvadd = NULL;
-        release_addmem: pci_free_consistent(pdev, intf->dmalen, intf->dmavadd,
+        release_addmem: dma_free_coherent(&pdev->dev, intf->dmalen, intf->dmavadd,
                         intf->dmaadd);
         release_dma: iounmap(intf->reg1vadd);
         release_mem_region(intf->reg1add, intf->reg1len);

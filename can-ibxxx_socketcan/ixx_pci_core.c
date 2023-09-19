@@ -592,7 +592,7 @@ static int ixxat_pci_create_dev(struct ixx_pci_adapter *ixxat_pci_adapter,
 
         spin_lock_init(&priv->rcv_lock);
 
-        netif_napi_add(netdev, &priv->napi, priv->adapter->dev_napi_rx_poll, 2);
+        netif_napi_add_weight(netdev, &priv->napi, priv->adapter->dev_napi_rx_poll, 2);
 
         priv->can.clock = ixxat_pci_adapter->clock;
         priv->can.bittiming_const = &ixxat_pci_adapter->bittiming_const;
@@ -857,7 +857,7 @@ static int ixxat_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
         }
 
         if (intf->dmavadd)
-                pci_free_consistent(dev, intf->dmalen, intf->dmavadd,
+                dma_free_coherent(&dev->dev, intf->dmalen, intf->dmavadd,
                                 intf->dmaadd);
 
         iounmap(intf->reg1vadd);
